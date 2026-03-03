@@ -77,6 +77,40 @@ python3 telegram_notifier.py
 - 📊 **JSON Reporting**: Creates structured reports for integration with other security tools
 - 💡 **Remediation Tips**: Suggests fixes for identified security issues
 
+## 🛡️ Security Skills
+
+VibeGuard includes multiple specialized security scanning tools:
+
+### 🔍 VibeScanner
+Scans your workspace for security vulnerabilities in file permissions and configurations.
+```
+/vibe-scan
+```
+
+### 📜 LogInspector
+Analyzes system logs to detect suspicious activities, unauthorized access attempts, and more.
+```
+/log-inspect --days=3
+```
+
+### 🦠 MalwareDetector
+Scans files for suspicious patterns, known malware signatures, and potentially dangerous code.
+```
+/malware-scan [directory] --deep
+```
+
+### 🔑 CredentialFinder
+Hunts for exposed credentials, API keys, tokens, and secrets in your codebase.
+```
+/cred-scan [directory] --thorough
+```
+
+### 🌐 NetworkMonitor
+Checks network connections, open ports, and suspicious traffic patterns.
+```
+/net-scan --suspicious
+```
+
 ## 🔄 Maintenance
 
 To keep VibeGuard updated:

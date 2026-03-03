@@ -1,0 +1,11 @@
+#!/bin/bash
+# CredentialFinder Launcher
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# Pass all arguments to the Python script
+python3 "$SCRIPT_DIR/credential_finder.py" "$@"
+
+# Return the status code from the Python script
+exit $?
