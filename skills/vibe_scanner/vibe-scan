@@ -1,0 +1,11 @@
+#!/bin/bash
+# VibeScanner Launcher
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# Execute the Python script
+python3 "$SCRIPT_DIR/vibe_scan.py"
+
+# Return the status code from the Python script
+exit $?

@@ -1,46 +1,20 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
+# Environment files
 .env
+*.env
 
-# vercel
-.vercel
-
-# python
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
+# Logs
+*.log
+last_scan.json
 
-# Virtual environments
-venv/
-env/
-ENV/
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+.idea/
