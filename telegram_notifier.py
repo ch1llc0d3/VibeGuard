@@ -87,54 +87,82 @@ def run_vibe_scan():
         }
 
 def format_message(scan_results):
-    """Format scan results for Telegram"""
+    """Format scan results for Telegram in a friendly way with remediation tips"""
     timestamp = scan_results.get('timestamp', datetime.now().isoformat())
     risk_level = scan_results.get('risk_level', '❓ Unknown')
     
-    message = f"*VibeGuard Security Scan Results*\n\n"
+    # Convert ISO timestamp to something more readable
+    try:
+        dt = datetime.fromisoformat(timestamp)
+        friendly_time = dt.strftime("%b %d, %Y at %H:%M")
+    except:
+        friendly_time = timestamp
+    
+    message = f"*✨ VibeGuard Security Scan Results ✨*\n\n"
     message += f"*Status:* {risk_level}\n"
-    message += f"*Time:* {timestamp}\n\n"
+    message += f"*Scanned:* {friendly_time}\n\n"
     
     if 'error' in scan_results:
-        message += f"*Error:*\n{scan_results['error']}\n\n"
+        message += f"*⚠️ Error:*\n{scan_results['error']}\n\n"
+        message += "_Try running the scan again or check permissions._"
         return message
         
     if 'raw_output' in scan_results:
         # Just include the raw output if we couldn't parse JSON
-        message += f"*Details:*\n```\n{scan_results['raw_output'][:3500]}```"
+        message += f"*Details:*\n```\n{scan_results['raw_output'][:3000]}```"
         return message
     
-    # Format structured results
+    # Format structured results with emojis and tips
+    has_issues = False
+    
     if scan_results.get('permission_issues'):
-        message += "*Permission Issues:*\n"
+        has_issues = True
+        message += "*🔓 Permission Issues:*\n"
         for issue in scan_results['permission_issues'][:5]:  # Limit to 5
-            message += f"- {issue}\n"
+            message += f"• {issue}\n"
         
         if len(scan_results['permission_issues']) > 5:
-            message += f"- ... and {len(scan_results['permission_issues']) - 5} more\n"
-        message += "\n"
+            message += f"• _...and {len(scan_results['permission_issues']) - 5} more issues_\n"
+        
+        message += "\n*💡 Quick Fix:*\n"
+        message += "• Run `chmod go-w [file]` to remove world-writable permissions\n"
+        message += "• Check who created these files and why permissions were set this way\n\n"
         
     if scan_results.get('env_files'):
-        message += "*Exposed Environment Files:*\n"
+        has_issues = True
+        message += "*🔑 Exposed Environment Files:*\n"
         for env_file in scan_results['env_files'][:5]:  # Limit to 5
-            message += f"- {env_file}\n"
+            message += f"• {env_file}\n"
         
         if len(scan_results['env_files']) > 5:
-            message += f"- ... and {len(scan_results['env_files']) - 5} more\n"
-        message += "\n"
+            message += f"• _...and {len(scan_results['env_files']) - 5} more files_\n"
+        
+        message += "\n*💡 Quick Fix:*\n"
+        message += "• Add these files to `.gitignore`\n"
+        message += "• Check if they're already committed to git with `git ls-files`\n"
+        message += "• Consider a secrets manager for production environments\n\n"
         
     if scan_results.get('git_issues'):
-        message += "*Git Configuration Issues:*\n"
+        has_issues = True
+        message += "*🐙 Git Configuration Issues:*\n"
         for issue in scan_results['git_issues']:
-            message += f"- {issue}\n"
-        message += "\n"
+            message += f"• {issue}\n"
+        
+        message += "\n*💡 Quick Fix:*\n"
+        message += "• Remove credentials from git config files\n"
+        message += "• Use git credential store instead: `git config --global credential.helper store`\n\n"
     
-    if not any([
-        scan_results.get('permission_issues'), 
-        scan_results.get('env_files'), 
-        scan_results.get('git_issues')
-    ]):
-        message += "✅ No security issues detected! The workspace is secure.\n"
+    if not has_issues:
+        message += "🎉 *All Clear!* No security issues detected.\n\n"
+        message += "Your workspace looks secure and well-configured. Great job!\n"
+        message += "_Remember to scan regularly as part of your security routine._"
+    else:
+        # Add summary section for issues
+        message += "*📋 Next Steps:*\n"
+        message += "1. Fix the issues identified above\n"
+        message += "2. Run another scan to verify fixes\n"
+        message += "3. Consider adding this scan to your CI/CD pipeline\n"
+        message += "\n_Need help? Contact your security team or run `/vibe-scan --help`_"
     
     return message
 
